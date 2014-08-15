@@ -1,4 +1,33 @@
-<link rel="stylesheet" href="brick-select.css">
-<link rel="stylesheet" href="themes/default/default.css">
-<script src="brick-select.js"></script>
+<link rel="import" href="../bower_components/brick-common/brick-common.html">
 
+<template id="brick-select-template">
+  <link rel="stylesheet" href="brick-select.css">
+  <link rel="stylesheet" href="themes/default/default.css">
+
+  <button class="handle">
+    Show
+  </button>
+
+  <div class="dialogue" role="dialog">
+    <div class="panel">
+      <header>
+        <h1></h1>
+      </header>
+      <ul class="menu">
+      </ul>
+      <footer>
+        <button class="close">Close</button>
+      </footer>
+    </div>
+  </div>
+
+</template>
+
+<template id="brick-select-option-template">
+  <li class="menu-item">
+    <span class="label"></span><i class="icon"></i>
+    <div class="menu-item-selected"></div>
+  </li>
+</template>
+
+<script src="brick-select.js"></script>

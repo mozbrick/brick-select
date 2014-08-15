@@ -1,2 +1,230 @@
 @import '../bower_components/brick-common/styles/mixins'
 @import '../bower_components/brick-common/styles/params'
+
+// HACK
+@import '../../../bower_components/brick-common/styles/themes/default/params'
+$font-small = 14px;
+$font-medium = 17px;
+$font-large = 23px;
+$color-brand-blue = #00caf2;
+
+@keyframes brickSelectTranslateIn {
+    0% { opacity: 0; transform: translateY(100px); }
+    100% { opacity: 1; transform: translateY(0px); }
+}
+@keyframes brickSelectFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes brickSelectFadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+:host() {
+
+  .dialogue {
+    visibility: hidden;
+    .panel { opacity: 0; }
+  }
+
+  .dialogue[show] {
+    visibility: visible;
+    .panel { opacity: 1; }
+  }
+
+  .dialogue[show="in"] {
+    visibility: visible;
+    animation-name: brickSelectFadeIn;
+    animation-duration: 0.3s;
+
+    .panel {
+      opacity: 0;
+      animation-name: brickSelectTranslateIn;
+      animation-delay: 0.4s;
+      animation-duration: 0.3s;
+      animation-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.275);
+      menu {
+        button {
+            transition: none;
+        }
+      }
+    }
+  }
+
+  .dialogue[show="out"] {
+    visibility: visible;
+    animation-name: brickSelectFadeOut;
+    animation-delay: 0.4s;
+    animation-duration: 0.3s;
+
+    .panel {
+      opacity: 0;
+      animation-name: brickSelectFadeOut;
+      animation-duration: 0.3s;
+      animation-timing-function: linear;
+      menu {
+        button {
+            transition: none;
+        }
+      }
+    }
+  }
+
+  font-family: $fontFamilyPrimary;
+  font-size: $font-medium;
+
+  .dialogue {
+
+    background: rgba(199,199,199,0.85);
+    font-style: italic;
+
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    font-style: italic;
+
+    .panel {
+
+      max-height: 75%;
+      max-width: 350px;
+      width: 90%;
+      border: 0;
+      padding: 0;
+      margin: auto;
+      background: $color-iota;
+
+      header {
+        padding: $dim-small;
+        h1 {
+          text-align: center;
+          font-size: 23px;
+          font-weight: lighter;
+          font-style: italic;
+          line-height: 26px;
+          color: $color-gamma;
+          margin: 6px 0 24px 0;
+          padding: 0;
+        }
+      }
+
+      footer {
+        display: flex;
+
+        button {
+          height: 50px;
+          font-weight: lighter;
+          font-style: italic;
+          font-size: $font-medium;
+          flex-grow: 1;
+          margin: 0;
+          border: 0;
+          padding: 0rem 25px;
+          background: $color-beta;
+          color: $color-brand-blue;
+          transition: all 0.2;
+          transition-delay: 200ms;
+          position: relative;
+
+          &:after {
+            content: " ";
+            position: absolute;
+            --dim-micro: $dim-micro;
+            height: calc(100% - var(--dim-micro) * 2);
+            width: 1px;
+            top: $dim-micro;
+            right: 0px;
+            background: #e7e7e7;
+            z-index: 1;
+          }
+          &:active {
+            background-color: $color-brand-blue;
+            color: #fff;
+            transition: none;
+          }
+          &:active:after {
+            z-index: -1;
+          }
+          &:last-child:after {
+            display: none;
+          }
+        }
+      }
+
+      .menu {
+        max-height: 350px; // HACK
+        overflow-y: auto;
+
+        padding: 0;
+        margin: 0;
+        width: 100%;
+
+        .menu-item {
+
+          padding: $dim-small;
+          color: $color-gamma;
+
+          box-sizing: border-box;
+          list-style: none;
+          position: relative;
+          z-index: 1;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          position: relative;
+
+          &[selected] {
+            color: $color-brand-blue;
+            .label {
+              font-weight: bold;
+              flex-grow: 1;
+            }
+            .icon:before {
+              content: "\f00c";
+              font-size: 18px;
+            }
+            .icon {
+              display: inline-block;
+              font-family: FontAwesome;
+              font-style: normal;
+              font-weight: normal;
+              line-height: 1;
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale;
+            }
+          }
+
+          &:after {
+            content: " ";
+            position: absolute;
+            bottom: 0px;
+            left: $dim-small;
+            --dim-small: $dim-small;
+            width: calc(100% - var(--dim-small) * 2);
+            height: 1px;
+            margin-left: auto;
+            margin-right: auto;
+
+            background: $color-theta;
+
+            &:last-child {
+              display: none;
+            }
+          }
+
+        }
+
+
+      }
+
+    }
+
+  }
+
+}

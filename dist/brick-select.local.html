@@ -1,0 +1,325 @@
+<link rel="import" href="../bower_components/brick-common/brick-common.html">
+
+<template id="brick-select-template">
+  <style>:host() {
+  font-family: "Fira Sans", "Fira Sans", "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 17px;
+}
+:host() .dialogue {
+  visibility: hidden;
+}
+:host() .dialogue .panel {
+  opacity: 0;
+}
+:host() .dialogue[show] {
+  visibility: visible;
+}
+:host() .dialogue[show] .panel {
+  opacity: 1;
+}
+:host() .dialogue[show="in"] {
+  visibility: visible;
+  animation-name: brickSelectFadeIn;
+  animation-duration: 0.3s;
+}
+:host() .dialogue[show="in"] .panel {
+  opacity: 0;
+  animation-name: brickSelectTranslateIn;
+  animation-delay: 0.4s;
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+:host() .dialogue[show="in"] .panel menu button {
+  transition: none;
+}
+:host() .dialogue[show="out"] {
+  visibility: visible;
+  animation-name: brickSelectFadeOut;
+  animation-delay: 0.4s;
+  animation-duration: 0.3s;
+}
+:host() .dialogue[show="out"] .panel {
+  opacity: 0;
+  animation-name: brickSelectFadeOut;
+  animation-duration: 0.3s;
+  animation-timing-function: linear;
+}
+:host() .dialogue[show="out"] .panel menu button {
+  transition: none;
+}
+:host() .dialogue {
+  background: rgba(199,199,199,0.85);
+  font-style: italic;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+  z-index: 200;
+  font-style: italic;
+}
+:host() .dialogue .panel {
+  max-height: 75%;
+  max-width: 350px;
+  width: 90%;
+  border: 0;
+  padding: 0;
+  margin: auto;
+  background: #f4f4f4;
+}
+:host() .dialogue .panel header {
+  padding: 14px;
+}
+:host() .dialogue .panel header h1 {
+  text-align: center;
+  font-size: 23px;
+  font-weight: lighter;
+  font-style: italic;
+  line-height: 26px;
+  color: #4d4d4d;
+  margin: 6px 0 24px 0;
+  padding: 0;
+}
+:host() .dialogue .panel footer {
+  display: flex;
+}
+:host() .dialogue .panel footer button {
+  height: 50px;
+  font-weight: lighter;
+  font-style: italic;
+  font-size: 17px;
+  flex-grow: 1;
+  margin: 0;
+  border: 0;
+  padding: 0rem 25px;
+  background: #fff;
+  color: #00caf2;
+  transition: all 0.2;
+  transition-delay: 200ms;
+  position: relative;
+}
+:host() .dialogue .panel footer button:after {
+  content: " ";
+  position: absolute;
+  --dim-micro: 6px;
+  height: calc(100% - var(--dim-micro) * 2);
+  width: 1px;
+  top: 6px;
+  right: 0px;
+  background: #e7e7e7;
+  z-index: 1;
+}
+:host() .dialogue .panel footer button:active {
+  background-color: #00caf2;
+  color: #fff;
+  transition: none;
+}
+:host() .dialogue .panel footer button:active:after {
+  z-index: -1;
+}
+:host() .dialogue .panel footer button:last-child:after {
+  display: none;
+}
+:host() .dialogue .panel .menu {
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+:host() .dialogue .panel .menu .menu-item {
+  padding: 14px;
+  color: #4d4d4d;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  list-style: none;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  display: flex;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+  position: relative;
+}
+:host() .dialogue .panel .menu .menu-item[selected] {
+  color: #00caf2;
+}
+:host() .dialogue .panel .menu .menu-item[selected] .label {
+  font-weight: bold;
+  flex-grow: 1;
+}
+:host() .dialogue .panel .menu .menu-item[selected] .icon:before {
+  content: "\f00c";
+  font-size: 18px;
+}
+:host() .dialogue .panel .menu .menu-item[selected] .icon {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+:host() .dialogue .panel .menu .menu-item:after {
+  content: " ";
+  position: absolute;
+  bottom: 0px;
+  left: 14px;
+  --dim-small: 14px;
+  width: calc(100% - var(--dim-small) * 2);
+  height: 1px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #e7e7e7;
+}
+:host() .dialogue .panel .menu .menu-item:after:last-child {
+  display: none;
+}
+@-moz-keyframes brickSelectTranslateIn {
+  0% {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+@-webkit-keyframes brickSelectTranslateIn {
+  0% {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+@-o-keyframes brickSelectTranslateIn {
+  0% {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+@keyframes brickSelectTranslateIn {
+  0% {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+@-moz-keyframes brickSelectFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes brickSelectFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-o-keyframes brickSelectFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes brickSelectFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-moz-keyframes brickSelectFadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes brickSelectFadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@-o-keyframes brickSelectFadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes brickSelectFadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+</style>
+  <style></style>
+
+  <button class="handle">
+    Show
+  </button>
+
+  <div class="dialogue" role="dialog">
+    <div class="panel">
+      <header>
+        <h1></h1>
+      </header>
+      <ul class="menu">
+      </ul>
+      <footer>
+        <button class="close">Close</button>
+      </footer>
+    </div>
+  </div>
+
+</template>
+
+<template id="brick-select-option-template">
+  <li class="menu-item">
+    <span class="label"></span><i class="icon"></i>
+    <div class="menu-item-selected"></div>
+  </li>
+</template>
+
+
+<script src="brick-select.js"></script>
