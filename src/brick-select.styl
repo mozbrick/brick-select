@@ -7,6 +7,7 @@ $font-small = 14px;
 $font-medium = 17px;
 $font-large = 23px;
 $color-brand-blue = #00caf2;
+$color-button-border = #d6d6d6;
 
 @keyframes brickSelectTranslateIn {
     0% { opacity: 0; transform: translateY(100px); }
@@ -19,6 +20,14 @@ $color-brand-blue = #00caf2;
 @keyframes brickSelectFadeOut {
     0% { opacity: 1; }
     100% { opacity: 0; }
+}
+
+@keyframes brickSelectGrow {
+    0% { transform: scale(0); }
+    50% { transform: scale(1); }
+    50% { transform: scale(1); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: scale(1); opacity: 0; }
 }
 
 :host() {
@@ -71,10 +80,45 @@ $color-brand-blue = #00caf2;
     }
   }
 
-  font-family: $fontFamilyPrimary;
-  font-size: $font-medium;
+  button.handle {
+    position: relative;
+    background: transparent;
+    color: $color-alpha;
+    font-family: $fontFamilyPrimary;
+    font-size: $font-medium;
+    width: inherit;
+    height: 50px;
+    font-weight: lighter;
+    font-style: italic;
+    font-size: $font-medium;
+    text-align: inherit;
+    margin: inherit;
+    border: 1px solid $color-button-border;
+    padding: 0rem 25px;
+    transition: all 0.2;
+    transition-delay:  var(--button-transition-delay, 200ms);
+    span {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  button:after {
+    content: " ";
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    bottom: 5px;
+    right: 5px;
+    border-bottom: 10px solid $highlight-color;
+    border-left: 10px solid transparent;
+  }
 
   .dialogue {
+    font-family: $fontFamilyPrimary;
+    font-size: $font-medium;
 
     background: rgba(199,199,199,0.85);
     font-style: italic;
@@ -216,6 +260,23 @@ $color-brand-blue = #00caf2;
             &:last-child {
               display: none;
             }
+          }
+
+          .feedback {
+            content: "*";
+            position: absolute;
+            opacity: 0;
+            border-radius: 50%;
+            transform-origin: center center;
+            background: $color-theta;
+            transform: scaleX(1);
+            z-index: -1;
+          }
+
+          .feedback.animate {
+            animation-name: brickSelectGrow;
+            animation-duration: 800ms;
+            animation-iteration: 1;
           }
 
         }

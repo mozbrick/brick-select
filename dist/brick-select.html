@@ -1,11 +1,7 @@
 <link rel="import" href="../../brick-common/brick-common.html">
 
 <template id="brick-select-template">
-  <style>:host() {
-  font-family: "Fira Sans", "Fira Sans", "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
-  font-size: 17px;
-}
-:host() .dialogue {
+  <style>:host() .dialogue {
   visibility: hidden;
 }
 :host() .dialogue .panel {
@@ -47,7 +43,43 @@
 :host() .dialogue[show="out"] .panel menu button {
   transition: none;
 }
+:host() button.handle {
+  position: relative;
+  background: transparent;
+  color: #333;
+  font-family: "Fira Sans", "Fira Sans", "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 17px;
+  width: inherit;
+  height: 50px;
+  font-weight: lighter;
+  font-style: italic;
+  font-size: 17px;
+  text-align: inherit;
+  margin: inherit;
+  border: 1px solid #d6d6d6;
+  padding: 0rem 25px;
+  transition: all 0.2;
+  transition-delay: var(--button-transition-delay, 200ms);
+}
+:host() button.handle span {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+:host() button:after {
+  content: " ";
+  position: absolute;
+  width: 0px;
+  height: 0px;
+  bottom: 5px;
+  right: 5px;
+  border-bottom: 10px solid #000;
+  border-left: 10px solid transparent;
+}
 :host() .dialogue {
+  font-family: "Fira Sans", "Fira Sans", "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 17px;
   background: rgba(199,199,199,0.85);
   font-style: italic;
   position: fixed;
@@ -188,6 +220,21 @@
 :host() .dialogue .panel .menu .menu-item:after:last-child {
   display: none;
 }
+:host() .dialogue .panel .menu .menu-item .feedback {
+  content: "*";
+  position: absolute;
+  opacity: 0;
+  border-radius: 50%;
+  transform-origin: center center;
+  background: #e7e7e7;
+  transform: scaleX(1);
+  z-index: -1;
+}
+:host() .dialogue .panel .menu .menu-item .feedback.animate {
+  animation-name: brickSelectGrow;
+  animation-duration: 800ms;
+  animation-iteration: 1;
+}
 @-moz-keyframes brickSelectTranslateIn {
   0% {
     opacity: 0;
@@ -292,12 +339,86 @@
     opacity: 0;
   }
 }
+@-moz-keyframes brickSelectGrow {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+@-webkit-keyframes brickSelectGrow {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+@-o-keyframes brickSelectGrow {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+@keyframes brickSelectGrow {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
 </style>
   <style></style>
 
-  <button class="handle">
-    Show
-  </button>
+  <button class="handle"><span></span></button>
 
   <div class="dialogue" role="dialog">
     <div class="panel">
@@ -316,7 +437,7 @@
 <template id="brick-select-option-template">
   <li class="menu-item">
     <span class="label"></span><i class="icon"></i>
-    <div class="menu-item-selected"></div>
+    <div class="feedback"></div>
   </li>
 </template>
 

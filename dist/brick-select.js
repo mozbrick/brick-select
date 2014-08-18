@@ -3,6 +3,7 @@
 (function () {
 
   var currentScript = document._currentScript || document.currentScript;
+  var importDoc = currentScript.ownerDocument;
 
   var BrickSelectElementPrototype = Object.create(HTMLElement.prototype);
 
@@ -10,20 +11,18 @@
 
   var TMPL_ROOT = 'template#brick-select-template';
   var TMPL_ITEM = 'template#brick-select-option-template';
-  var TMPL_INPUT = 'template#brick-select-input';
 
   BrickSelectElementPrototype.createdCallback = function () {
     var self = this;
 
     this.ns = { };
 
-    var importDoc = currentScript.ownerDocument;
-    var templateContent = importDoc.querySelector(TMPL_ROOT).content;
+    var template = importDoc.querySelector(TMPL_ROOT);
 
-    shimShadowStyles(templateContent.querySelectorAll('style'),'brick-select');
+    shimShadowStyles(template.content.querySelectorAll('style'),'brick-select');
 
     var shadowRoot = this.createShadowRoot();
-    shadowRoot.appendChild(templateContent.cloneNode(true));
+    shadowRoot.appendChild(template.content.cloneNode(true));
 
     var title = this.getAttribute('title');
     if (title) {
@@ -32,7 +31,7 @@
       shadowRoot.removeChild(shadowRoot.querySelector('header'));
     }
 
-    shadowRoot.querySelector('button.handle').textContent = title;
+    shadowRoot.querySelector('button.handle span').textContent = title;
 
     var menu = shadowRoot.querySelector('ul.menu');
     var itemTemplateContent = importDoc.querySelector(TMPL_ITEM).content;
@@ -54,6 +53,8 @@
     inputs.style.visibility = 'hidden';
     this.parentNode.insertBefore(inputs, this);
 
+    this.updateProxy();
+
     shadowRoot.querySelector('button.handle')
       .addEventListener('click', function (ev) {
         self.show();
@@ -69,10 +70,11 @@
       });
 
     shadowRoot.addEventListener('click', function (ev) {
-      if (ev.target == self.shadowRoot.querySelector('.dialogue')) {
+      if (ev.target === self.shadowRoot.querySelector('.dialogue')) {
         return self.hide();
       }
       return delegate('.menu-item', function (ev) {
+        self.animateMenuItemClick(this, ev);
         if (self.hasAttribute('multiple')) {
           self.toggleSelected(this);
         } else {
@@ -113,7 +115,7 @@
     function animEnd (ev) {
       this.removeEventListener('animationend', animEnd);
       dialogue.setAttribute('show', '');
-    };
+    }
     dialogue.querySelector('.panel').addEventListener('animationend', animEnd);
   };
 
@@ -127,7 +129,7 @@
       if (ev.target !== this) { return; }
       this.removeEventListener('animationend', animEnd);
       dialogue.removeAttribute('show');
-    };
+    }
     dialogue.addEventListener('animationend', animEnd, false);
   };
 
@@ -158,6 +160,7 @@
   };
 
   BrickSelectElementPrototype.updateProxy = function (el) {
+    var names = [];
     var inputs = this.ns.inputs;
     while (inputs.firstChild) {
       inputs.removeChild(inputs.firstChild);
@@ -174,6 +177,23 @@
         input.setAttribute(k, attrs[k]);
       }
       inputs.appendChild(input);
+      names.push(item.querySelector('.label').textContent);
+    }
+    this.shadowRoot.querySelector('button.handle span').textContent = names.join(', ');
+  };
+
+  BrickSelectElementPrototype.animateMenuItemClick = function (item, ev) {
+    var animate = this.shadowRoot.querySelector('.feedback.animate');
+    if (animate) animate.classList.remove('animate');
+
+    var selected = item.querySelector('.feedback');
+    if (selected) {
+        var w = selected.parentNode.offsetWidth*2;
+        selected.style.width = w+'px';
+        selected.style.height = w+'px';
+        selected.style.top = (w/2*-1)+(this.offsetHeight/2)+'px';
+        selected.style.left = (ev.layerX-(w/2))+'px';
+        selected.classList.add('animate');
     }
   };
 
