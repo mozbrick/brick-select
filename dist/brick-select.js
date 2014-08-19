@@ -54,35 +54,45 @@
 
     this.updateProxy();
 
+    // Accept <label> clicks to show select dialog
+    var name = this.getAttribute('name');
+    if (name) {
+      var label = document.querySelector('label[for="' + name + '"]');
+      if (label) {
+        label.addEventListener('click', function (ev) {
+          self.show();
+        });
+      }
+    }
+
+    // Clicks on the visible select handle button shows the dialog
     shadowRoot.querySelector('button.handle')
       .addEventListener('click', function (ev) {
         self.show();
-        ev.stopPropagation();
-        ev.preventDefault();
+        return stopEvent(ev);
       });
 
     shadowRoot.querySelector('button.close')
       .addEventListener('click', function (ev) {
         self.hide();
-        ev.stopPropagation();
-        ev.preventDefault();
+        return stopEvent(ev);
       });
 
     shadowRoot.addEventListener('click', function (ev) {
-      /*
       if (ev.target === self.shadowRoot.querySelector('.dialogue')) {
-        return self.hide();
+        self.hide();
+      } else {
+        delegate('.menu-item', function (ev) {
+          self.animateMenuItemClick(this, ev);
+          if (self.hasAttribute('multiple')) {
+            self.toggleSelected(this);
+          } else {
+            self.setSelected(this);
+            self.hide();
+          }
+        })(ev);
       }
-      */
-      return delegate('.menu-item', function (ev) {
-        self.animateMenuItemClick(this, ev);
-        if (self.hasAttribute('multiple')) {
-          self.toggleSelected(this);
-        } else {
-          self.setSelected(this);
-          self.hide();
-        }
-      })(ev);
+      return stopEvent(ev);
     });
 
   };
@@ -182,7 +192,8 @@
       inputs.appendChild(input);
       names.push(item.querySelector('.label').textContent);
     }
-    this.shadowRoot.querySelector('button.handle span').textContent = names.join(', ');
+    this.shadowRoot.querySelector('button.handle span')
+        .textContent = names.join(', ');
   };
 
   BrickSelectElementPrototype.animateMenuItemClick = function (item, ev) {
@@ -191,6 +202,7 @@
 
     var selected = item.querySelector('.feedback');
     if (selected) {
+        // Use mouse click position as origin of the "ripple" effect
         var w = selected.parentNode.offsetWidth*2;
         selected.style.width = w+'px';
         selected.style.height = w+'px';
@@ -234,6 +246,12 @@
         }
       }
     };
+  }
+
+  function stopEvent (ev) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    return false;
   }
 
 })();
