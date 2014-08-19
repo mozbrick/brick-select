@@ -13,8 +13,6 @@
   var TMPL_ITEM = 'template#brick-select-option-template';
 
   BrickSelectElementPrototype.createdCallback = function () {
-    var self = this;
-
     this.ns = { };
 
     var template = importDoc.querySelector(TMPL_ROOT);
@@ -37,7 +35,8 @@
     var itemTemplateContent = importDoc.querySelector(TMPL_ITEM).content;
 
     var options = this.querySelectorAll('option');
-    for (var i = 0, option; option = options[i]; i++) {
+    for (var i = 0; i < options.length; i++) {
+      var option = options[i];
       var item = itemTemplateContent.cloneNode(true).querySelector('li');
       item.setAttribute('data-value', option.getAttribute('value'));
       item.querySelector('.label').innerHTML = option.innerHTML;
@@ -70,9 +69,11 @@
       });
 
     shadowRoot.addEventListener('click', function (ev) {
+      /*
       if (ev.target === self.shadowRoot.querySelector('.dialogue')) {
         return self.hide();
       }
+      */
       return delegate('.menu-item', function (ev) {
         self.animateMenuItemClick(this, ev);
         if (self.hasAttribute('multiple')) {
@@ -99,9 +100,6 @@
   // Attribute handlers
 
   var attrs = {
-    'attr': function (oldVal, newVal) {
-
-    }
   };
 
   // Custom methods
@@ -112,11 +110,13 @@
     var dialogue = this.shadowRoot.querySelector('.dialogue');
     dialogue.setAttribute('show', 'in');
 
-    function animEnd (ev) {
-      this.removeEventListener('animationend', animEnd);
+    function animEnd () {
+      this.removeEventListener('animationEnd', animEnd);
+      this.removeEventListener('webkitAnimationEnd', animEnd);
       dialogue.setAttribute('show', '');
     }
-    dialogue.querySelector('.panel').addEventListener('animationend', animEnd);
+    dialogue.querySelector('.panel').addEventListener('animationEnd', animEnd);
+    dialogue.querySelector('.panel').addEventListener('webkitAnimationEnd', animEnd);
   };
 
   BrickSelectElementPrototype.hide = function () {
@@ -127,10 +127,12 @@
 
     function animEnd (ev) {
       if (ev.target !== this) { return; }
-      this.removeEventListener('animationend', animEnd);
+      this.removeEventListener('animationEnd', animEnd);
+      this.removeEventListener('webkitAnimationEnd', animEnd);
       dialogue.removeAttribute('show');
     }
-    dialogue.addEventListener('animationend', animEnd, false);
+    dialogue.addEventListener('animationEnd', animEnd, false);
+    dialogue.addEventListener('webkitAnimationEnd', animEnd, false);
   };
 
   BrickSelectElementPrototype.setSelected = function (el) {
@@ -141,13 +143,13 @@
 
   BrickSelectElementPrototype.clearSelected = function (update) {
     var selected = this.shadowRoot.querySelectorAll('li[selected]');
-    for (var i = 0, item; item = selected[i]; i++) {
-      item.removeAttribute('selected');
+    for (var i = 0; i < selected.length; i++) {
+      selected[i].removeAttribute('selected');
     }
     if (update !== false) {
       this.updateProxy();
     }
-  }
+  };
 
   BrickSelectElementPrototype.toggleSelected = function (el) {
     var sel = el.hasAttribute('selected');
@@ -159,14 +161,15 @@
     this.updateProxy();
   };
 
-  BrickSelectElementPrototype.updateProxy = function (el) {
+  BrickSelectElementPrototype.updateProxy = function () {
     var names = [];
     var inputs = this.ns.inputs;
     while (inputs.firstChild) {
       inputs.removeChild(inputs.firstChild);
     }
     var selected = this.shadowRoot.querySelectorAll('li[selected]');
-    for (var i = 0, item; item = selected[i]; i++) {
+    for (var i = 0; i < selected.length; i++) {
+      var item = selected[i];
       var input = document.createElement('input');
       var attrs = {
         type: 'hidden',
@@ -184,7 +187,7 @@
 
   BrickSelectElementPrototype.animateMenuItemClick = function (item, ev) {
     var animate = this.shadowRoot.querySelector('.feedback.animate');
-    if (animate) animate.classList.remove('animate');
+    if (animate) { animate.classList.remove('animate'); }
 
     var selected = item.querySelector('.feedback');
     if (selected) {
@@ -196,19 +199,6 @@
         selected.classList.add('animate');
     }
   };
-
-  // Property handlers
-
-  Object.defineProperties(BrickSelectElementPrototype, {
-    'prop': {
-      get : function () {
-
-      },
-      set : function (newVal) {
-
-      }
-    }
-  });
 
   // Register the element
 

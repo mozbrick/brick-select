@@ -44,8 +44,11 @@ $color-button-border = #d6d6d6;
 
   .dialogue[show="in"] {
     visibility: visible;
+
     animation-name: brickSelectFadeIn;
     animation-duration: 0.3s;
+    -webkit-animation-name: brickSelectFadeIn;
+    -webkit-animation-duration: 0.3s;
 
     .panel {
       opacity: 0;
@@ -53,6 +56,10 @@ $color-button-border = #d6d6d6;
       animation-delay: 0.4s;
       animation-duration: 0.3s;
       animation-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.275);
+      -webkit-animation-name: brickSelectTranslateIn;
+      -webkit-animation-delay: 0.4s;
+      -webkit-animation-duration: 0.3s;
+      -webkit-animation-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.275);
       menu {
         button {
             transition: none;
@@ -66,12 +73,18 @@ $color-button-border = #d6d6d6;
     animation-name: brickSelectFadeOut;
     animation-delay: 0.4s;
     animation-duration: 0.3s;
+    -webkit-animation-name: brickSelectFadeOut;
+    -webkit-animation-delay: 0.4s;
+    -webkit-animation-duration: 0.3s;
 
     .panel {
       opacity: 0;
       animation-name: brickSelectFadeOut;
       animation-duration: 0.3s;
       animation-timing-function: linear;
+      -webkit-animation-name: brickSelectFadeOut;
+      -webkit-animation-duration: 0.3s;
+      -webkit-animation-timing-function: linear;
       menu {
         button {
             transition: none;

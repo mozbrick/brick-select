@@ -17,6 +17,8 @@
   visibility: visible;
   animation-name: brickSelectFadeIn;
   animation-duration: 0.3s;
+  -webkit-animation-name: brickSelectFadeIn;
+  -webkit-animation-duration: 0.3s;
 }
 :host .dialogue[show="in"] .panel {
   opacity: 0;
@@ -24,6 +26,10 @@
   animation-delay: 0.4s;
   animation-duration: 0.3s;
   animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  -webkit-animation-name: brickSelectTranslateIn;
+  -webkit-animation-delay: 0.4s;
+  -webkit-animation-duration: 0.3s;
+  -webkit-animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 :host .dialogue[show="in"] .panel menu button {
   transition: none;
@@ -33,12 +39,18 @@
   animation-name: brickSelectFadeOut;
   animation-delay: 0.4s;
   animation-duration: 0.3s;
+  -webkit-animation-name: brickSelectFadeOut;
+  -webkit-animation-delay: 0.4s;
+  -webkit-animation-duration: 0.3s;
 }
 :host .dialogue[show="out"] .panel {
   opacity: 0;
   animation-name: brickSelectFadeOut;
   animation-duration: 0.3s;
   animation-timing-function: linear;
+  -webkit-animation-name: brickSelectFadeOut;
+  -webkit-animation-duration: 0.3s;
+  -webkit-animation-timing-function: linear;
 }
 :host .dialogue[show="out"] .panel menu button {
   transition: none;
