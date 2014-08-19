@@ -111,11 +111,11 @@
     dialogue.setAttribute('show', 'in');
 
     function animEnd () {
-      this.removeEventListener('animationEnd', animEnd);
+      this.removeEventListener('animationend', animEnd);
       this.removeEventListener('webkitAnimationEnd', animEnd);
       dialogue.setAttribute('show', '');
     }
-    dialogue.querySelector('.panel').addEventListener('animationEnd', animEnd);
+    dialogue.querySelector('.panel').addEventListener('animationend', animEnd);
     dialogue.querySelector('.panel').addEventListener('webkitAnimationEnd', animEnd);
   };
 
@@ -127,11 +127,11 @@
 
     function animEnd (ev) {
       if (ev.target !== this) { return; }
-      this.removeEventListener('animationEnd', animEnd);
+      this.removeEventListener('animationend', animEnd);
       this.removeEventListener('webkitAnimationEnd', animEnd);
       dialogue.removeAttribute('show');
     }
-    dialogue.addEventListener('animationEnd', animEnd, false);
+    dialogue.addEventListener('animationend', animEnd, false);
     dialogue.addEventListener('webkitAnimationEnd', animEnd, false);
   };
 
