@@ -156,16 +156,15 @@
 
     this.updateSelectFromDialog();
 
-    // Accept <label> clicks to show select dialog
-    var name = this.getAttribute('name');
-    if (name) {
-      var label = document.querySelector('label[for="' + name + '"]');
-      if (label) {
-        label.addEventListener('click', function (ev) {
-          self.show();
-        });
-      }
-    }
+    // Intercept <label> clicks to show select dialog
+    document.addEventListener('click', function (ev) {
+      if (!self.select) { return; }
+      var sel = 'label[for="' + self.select.getAttribute('name') + '"]';
+      return delegate(sel, function (ev) {
+        self.show();
+        return stopEvent(ev);
+      })(ev);
+    });
 
     // Clicks on the visible select handle button shows the dialog
     shadowRoot.querySelector('button.handle')
@@ -210,10 +209,8 @@
 
   // Custom methods
 
-  BrickSelectProxyElementPrototype.show = function (callback) {
+  BrickSelectProxyElementPrototype.show = function () {
     this.updateDialogFromSelect();
-
-    this.ns.callback = callback;
 
     var dialogue = this.shadowRoot.querySelector('.dialogue');
     dialogue.setAttribute('show', 'in');
@@ -228,8 +225,6 @@
   };
 
   BrickSelectProxyElementPrototype.hide = function () {
-    this.ns.callback = null;
-
     var dialogue = this.shadowRoot.querySelector('.dialogue');
     dialogue.setAttribute('show', 'out');
 

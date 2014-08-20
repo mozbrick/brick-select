@@ -2,11 +2,11 @@
 
 > A [Brick](https://github.com/mozbrick/brick/) custom element starter-kit.
 
-[![Build Status](https://travis-ci.org/lmorchard/brick-select.svg)](https://travis-ci.org/lmorchard/brick-select)
+[![Build Status](https://travis-ci.org/mozbrick/brick-select.svg)](https://travis-ci.org/mozbrick/brick-select)
 
 ## Demo
 
-[Check it live!](http://lmorchard.github.io/brick-select)
+[Check it live!](http://mozbrick.github.io/brick-select)
 
 ## Usage
 
