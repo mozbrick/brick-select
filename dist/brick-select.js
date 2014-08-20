@@ -5,7 +5,7 @@
   var currentScript = document._currentScript || document.currentScript;
   var importDoc = currentScript.ownerDocument;
 
-  var BrickSelectElementPrototype = Object.create(HTMLElement.prototype);
+  var BrickSelectElementPrototype = Object.create(HTMLSelectElement.prototype);
 
   // Attribute handlers
 

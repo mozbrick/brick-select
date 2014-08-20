@@ -2,13 +2,17 @@
 /* global chai, before, describe, it */
 
 describe('<select is="brick-select" name="select1">', function () {
-  var select, label;
+  var form, select, label;
 
   before(function (done) {
+    form = document.createElement('form');
+    form.setAttribute('id', 'form1');
+    document.body.appendChild(form);
+
     select = document.createElement('select');
     select.setAttribute('name', 'select1');
     select.setAttribute('is', 'brick-select');
-    document.body.appendChild(select);
+    form.appendChild(select);
 
     setTimeout(done, 0); // HACK: Yield to let components set up.
   });
@@ -21,7 +25,7 @@ describe('<select is="brick-select" name="select1">', function () {
     expect(select.style.display).to.equal('none');
   });
 
-  describe("injected <brick-select-proxy>", function () {
+  describe("<brick-select-proxy> injected by <select>", function () {
     var proxy, dialog, handle, menu;
 
     before(function () {
@@ -91,10 +95,16 @@ describe('<select is="brick-select" name="select1">', function () {
         });
       });
 
-      it('should update dialog with options when shown', function (done) {
-        expect(menu.childNodes.length).to.equal(0);
-        proxy.show();
-        setTimeout(function () {
+      describe('when dialog shown', function () {
+
+        beforeEach(function (done) {
+          click(handle);
+          setTimeout(function () {
+            return done();
+          });
+        });
+
+        it('should update dialog with from <option>s', function () {
           var items = menu.childNodes;
           expect(items.length).to.equal(options.length);
           for (var i = 0; i < items.length; i++) {
@@ -103,8 +113,27 @@ describe('<select is="brick-select" name="select1">', function () {
             expect(item.getAttribute('data-value')).to.equal(expected[0]);
             expect(item.querySelector('.label').textContent).to.equal(expected[1]);
           }
-          return done();
-        }, 0);
+        });
+
+        it('should update selected <option> on item click', function (done) {
+          var expectedIndex = 1;
+          var items = menu.querySelectorAll('li');
+
+          click(items[expectedIndex]);
+
+          setTimeout(function () {
+            var optionNodes = select.querySelectorAll('option');
+            for (var i = 0; i < optionNodes.length; i++) {
+              expect(optionNodes[i].hasAttribute('selected'))
+                .to.be[i === expectedIndex];
+            }
+            expect(select.selectedIndex).to.equal(expectedIndex);
+            expect(document.forms[0].select1.value)
+              .to.equal(options[expectedIndex][0]);
+            return done();
+          }, 0);
+        });
+
       });
 
     });
@@ -120,7 +149,6 @@ describe('<select is="brick-select" name="select1">', function () {
 var expect = chai.expect;
 
 var ready;
-
 before(function (done) {
   ready = done;
 });
@@ -132,9 +160,11 @@ window.addEventListener('WebComponentsReady', function() {
   });
 });
 
-
 function click (el) {
-  el.dispatchEvent(new MouseEvent('click', {
-    view: window, bubbles: true, cancelable: true
-  }));
+  var ev = new MouseEvent('click', {
+    view: window,
+    bubbles: true,
+    cancelable: true
+  });
+  el.dispatchEvent(ev);
 }
