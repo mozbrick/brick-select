@@ -1,6 +1,6 @@
 # brick-select
 
-> A [Brick](https://github.com/mozbrick/brick/) custom element starter-kit.
+> A [Brick](https://github.com/mozbrick/brick/) `<select>` element wrapper
 
 [![Build Status](https://travis-ci.org/mozbrick/brick-select.svg)](https://travis-ci.org/mozbrick/brick-select)
 
