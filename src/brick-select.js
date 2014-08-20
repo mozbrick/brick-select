@@ -7,13 +7,6 @@
 
   var BrickSelectElementPrototype = Object.create(HTMLSelectElement.prototype);
 
-  // Attribute handlers
-
-  var attrs = {
-  };
-
-  // Lifecycle methods
-
   BrickSelectElementPrototype.createdCallback = function () {
     this.ns = { };
 
@@ -32,24 +25,6 @@
   BrickSelectElementPrototype.detachedCallback = function () {
     this.parentNode.removeChild(this.ns.proxy);
   };
-
-  BrickSelectElementPrototype.attributeChangedCallback = function (attr, oldVal, newVal) {
-    if (attr in attrs) {
-      attrs[attr].call(this, oldVal, newVal);
-    }
-  };
-
-  // Property handlers
-
-  Object.defineProperties(BrickSelectElementPrototype, {
-    options: {
-      get: function () {
-        return this.querySelectorAll('option');
-      }
-    }
-  });
-
-  // Register the element
 
   window.BrickSelectElement = document.registerElement('brick-select', {
     prototype: BrickSelectElementPrototype,

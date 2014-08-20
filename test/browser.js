@@ -26,13 +26,14 @@ describe('<select is="brick-select" name="select1">', function () {
   });
 
   describe("<brick-select-proxy> injected by <select>", function () {
-    var proxy, dialog, handle, menu;
+    var proxy, dialog, handle, close, menu;
 
     before(function () {
       proxy = document.querySelector('brick-select-proxy');
       dialog = proxy.shadowRoot.querySelector('.dialogue');
       menu = proxy.shadowRoot.querySelector('.menu');
       handle = proxy.shadowRoot.querySelector('.handle');
+      close = proxy.shadowRoot.querySelector('.close');
     });
 
     beforeEach(function () {
@@ -65,7 +66,7 @@ describe('<select is="brick-select" name="select1">', function () {
         document.body.appendChild(label);
       });
 
-      it('should reveal <brick-select-proxy> dialog when clicked', function (done) {
+      it('should reveal dialog when clicked', function (done) {
         expect(dialog.hasAttribute('show')).to.be.false;
         click(label);
         setTimeout(function () {
@@ -76,14 +77,16 @@ describe('<select is="brick-select" name="select1">', function () {
 
     });
 
-    describe('<select> with <options>', function () {
+    describe('<select> with <options> and handle clicked', function () {
+
       var options = [
         ['alpha', 'Alpha'],
         ['beta', 'Beta'],
         ['gamma', 'Gamma']
       ];
 
-      beforeEach(function () {
+      beforeEach(function (done) {
+        select.removeAttribute('multiple');
         while (select.firstChild) {
           select.removeChild(select.firstChild);
         }
@@ -93,43 +96,91 @@ describe('<select is="brick-select" name="select1">', function () {
           option.textContent = pair[1];
           select.appendChild(option);
         });
+        click(handle);
+        setTimeout(function () {
+          return done();
+        }, 0);
       });
 
-      describe('when dialog shown', function () {
+      it('should initialize dialog from <option>s', function () {
+        var items = menu.childNodes;
+        expect(items.length).to.equal(options.length);
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          var expected = options[i];
+          expect(item.getAttribute('data-value')).to.equal(expected[0]);
+          expect(item.querySelector('.label').textContent).to.equal(expected[1]);
+        }
+      });
 
-        beforeEach(function (done) {
-          click(handle);
-          setTimeout(function () {
-            return done();
-          });
-        });
+      it('should update when <option>s change and dialog is reopened', function (done) {
+        expect(menu.childNodes.length).to.equal(options.length);
 
-        it('should update dialog with from <option>s', function () {
-          var items = menu.childNodes;
-          expect(items.length).to.equal(options.length);
-          for (var i = 0; i < items.length; i++) {
-            var item = items[i];
-            var expected = options[i];
-            expect(item.getAttribute('data-value')).to.equal(expected[0]);
-            expect(item.querySelector('.label').textContent).to.equal(expected[1]);
+        var option = document.createElement('option');
+        option.setAttribute('value', 'delta');
+        option.textContent = 'Delta';
+        select.appendChild(option);
+
+        click(close);
+        click(handle);
+
+        setTimeout(function () {
+          expect(menu.childNodes.length).to.equal(options.length + 1);
+          return done();
+        }, 0);
+      });
+
+      it('should update selected <option> on item click', function (done) {
+        var expectedIndex = 1;
+        var items = menu.querySelectorAll('li');
+
+        click(items[expectedIndex]);
+
+        setTimeout(function () {
+          var optionNodes = select.querySelectorAll('option');
+          for (var i = 0; i < optionNodes.length; i++) {
+            expect(optionNodes[i].hasAttribute('selected'))
+              .to.be[i === expectedIndex];
           }
+          expect(select.selectedIndex).to.equal(expectedIndex);
+          expect(document.forms[0].select1.value)
+            .to.equal(options[expectedIndex][0]);
+          return done();
+        }, 0);
+      });
+
+      it('should hide the dialog immediately on item click', function (done) {
+        expect(dialog.hasAttribute('show')).to.be.true;
+        click(menu.querySelectorAll('li')[0]);
+
+        setTimeout(function () {
+          expect(isHidden(dialog)).to.be.true;
+          return done();
+        }, 0);
+      });
+
+      it('should hide the dialog on close button click', function (done) {
+        expect(dialog.hasAttribute('show')).to.be.true;
+        click(dialog.querySelector('.close'));
+
+        setTimeout(function () {
+          expect(isHidden(dialog)).to.be.true;
+          return done();
+        }, 0);
+      });
+
+      describe('<select multiple>', function () {
+
+        beforeEach(function () {
+          select.setAttribute('multiple', true);
         });
 
-        it('should update selected <option> on item click', function (done) {
-          var expectedIndex = 1;
-          var items = menu.querySelectorAll('li');
-
-          click(items[expectedIndex]);
+        it('should not hide the dialog immediately on item click', function (done) {
+          expect(dialog.hasAttribute('show')).to.be.true;
+          click(menu.querySelectorAll('li')[0]);
 
           setTimeout(function () {
-            var optionNodes = select.querySelectorAll('option');
-            for (var i = 0; i < optionNodes.length; i++) {
-              expect(optionNodes[i].hasAttribute('selected'))
-                .to.be[i === expectedIndex];
-            }
-            expect(select.selectedIndex).to.equal(expectedIndex);
-            expect(document.forms[0].select1.value)
-              .to.equal(options[expectedIndex][0]);
+            expect(!isHidden(dialog)).to.be.true;
             return done();
           }, 0);
         });
@@ -159,6 +210,12 @@ window.addEventListener('WebComponentsReady', function() {
     ready();
   });
 });
+
+function isHidden (dialog) {
+  // FIXME: Should be able to defer until animation has completed.
+  return (!dialog.hasAttribute('show') ||
+          'out' === dialog.getAttribute('show'));
+}
 
 function click (el) {
   var ev = new MouseEvent('click', {

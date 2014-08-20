@@ -7,13 +7,6 @@
 
   var BrickSelectElementPrototype = Object.create(HTMLSelectElement.prototype);
 
-  // Attribute handlers
-
-  var attrs = {
-  };
-
-  // Lifecycle methods
-
   BrickSelectElementPrototype.createdCallback = function () {
     this.ns = { };
 
@@ -32,24 +25,6 @@
   BrickSelectElementPrototype.detachedCallback = function () {
     this.parentNode.removeChild(this.ns.proxy);
   };
-
-  BrickSelectElementPrototype.attributeChangedCallback = function (attr, oldVal, newVal) {
-    if (attr in attrs) {
-      attrs[attr].call(this, oldVal, newVal);
-    }
-  };
-
-  // Property handlers
-
-  Object.defineProperties(BrickSelectElementPrototype, {
-    options: {
-      get: function () {
-        return this.querySelectorAll('option');
-      }
-    }
-  });
-
-  // Register the element
 
   window.BrickSelectElement = document.registerElement('brick-select', {
     prototype: BrickSelectElementPrototype,
@@ -72,9 +47,6 @@
     "for": function (oldVal, newVal) {
       var name = this.ns['for'] = newVal;
       this.select = document.querySelector('select[name="' + name + '"]');
-    },
-    "multiple": function (oldVal, newVal) {
-      this.ns.multiple = this.hasAttribute('multiple');
     }
   };
 
@@ -86,14 +58,6 @@
       },
       set: function (el) {
         return this.proxyForSelect(el);
-      }
-    },
-    "multiple": {
-      get: function () {
-        return this.ns.multiple;
-      },
-      set: function (newVal) {
-        return this.ns.multiple = !!newVal;
       }
     }
   };
@@ -185,7 +149,7 @@
       } else {
         delegate('.menu-item', function (ev) {
           self.animateMenuItemClick(this, ev);
-          if (self.ns.multiple) {
+          if (self.select && self.select.hasAttribute('multiple')) {
             self.toggleSelected(this);
           } else {
             self.setSelected(this);
@@ -240,10 +204,7 @@
 
   BrickSelectProxyElementPrototype.proxyForSelect = function (select) {
     this.ns.select = select;
-    if (select) {
-      this.multiple = select.hasAttribute('multiple');
-      this.updateDialogFromSelect();
-    }
+    if (select) { this.updateDialogFromSelect(); }
     return select;
   };
 
