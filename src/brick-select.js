@@ -17,7 +17,7 @@
   BrickSelectElementPrototype.createdCallback = function () {
     this.ns = { };
 
-    // HACK: Hide the <select> and jus tleave the proxy visible.
+    // HACK: Hide the <select> and just leave the proxy visible.
     this.style.display = 'none';
   };
 
@@ -38,8 +38,6 @@
       attrs[attr].call(this, oldVal, newVal);
     }
   };
-
-  // Custom methods
 
   // Property handlers
 

@@ -10,14 +10,19 @@ module.exports = function(config){
 
     autoWatch : true,
 
+    autoWatchBatchDelay: 750, // Try not to race with gulp build
+
     frameworks: ['mocha', 'chai'],
 
     browsers : ['Firefox'],
+
+    reporters: ['spec'],
 
     plugins : [
       'karma-firefox-launcher',
       'karma-mocha',
       'karma-chai',
+      'karma-spec-reporter'
     ],
   });
 };

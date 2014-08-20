@@ -151,6 +151,8 @@
   // Custom methods
 
   BrickSelectProxyElementPrototype.show = function (callback) {
+    this.updateDialogFromSelect();
+
     this.ns.callback = callback;
 
     var dialogue = this.shadowRoot.querySelector('.dialogue');
