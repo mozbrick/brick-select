@@ -1,7 +1,13 @@
 <link rel="import" href="../../brick-common/brick-common.html">
 
 <template id="brick-select-template">
-  <style>:host .dialogue {
+  <style>:host([multiple]) .dialogue .panel footer.single {
+  display: none;
+}
+:host([multiple]) .dialogue .panel footer.multiple {
+  display: flex;
+}
+:host .dialogue {
   visibility: hidden;
 }
 :host .dialogue .panel {
@@ -61,7 +67,7 @@
   color: #333;
   font-family: "Fira Sans", "Fira Sans", "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
   font-size: 17px;
-  width: inherit;
+  width: 100%;
   height: 50px;
   font-weight: lighter;
   font-style: italic;
@@ -79,7 +85,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-:host button:after {
+:host button.handle:after {
   content: " ";
   position: absolute;
   width: 0px;
@@ -133,8 +139,14 @@
   margin: 6px 0 24px 0;
   padding: 0;
 }
-:host .dialogue .panel footer {
+:host .dialogue .panel footer.single {
   display: flex;
+}
+:host .dialogue .panel footer.multiple {
+  display: none;
+}
+:host .dialogue .panel footer {
+  display: none;
 }
 :host .dialogue .panel footer button {
   height: 50px;
@@ -439,8 +451,12 @@
       </header>
       <ul class="menu">
       </ul>
-      <footer>
+      <footer class="single">
         <button class="close">Close</button>
+      </footer>
+      <footer class="multiple">
+        <button class="cancel">Cancel</button>
+        <button class="commit">Select</button>
       </footer>
     </div>
   </div>

@@ -1,10 +1,4 @@
-/* global Platform */
-
 (function () {
-
-  var currentScript = document._currentScript || document.currentScript;
-  var importDoc = currentScript.ownerDocument;
-
   var BrickSelectElementPrototype = Object.create(HTMLSelectElement.prototype);
 
   BrickSelectElementPrototype.createdCallback = function () {
@@ -15,11 +9,9 @@
   };
 
   BrickSelectElementPrototype.attachedCallback = function () {
-    var self = this;
-
     var proxy = this.ns.proxy = document.createElement('brick-select-proxy');
     this.parentNode.insertBefore(proxy, this);
-    proxy.select = this;
+    proxy.proxyForSelect(this);
   };
 
   BrickSelectElementPrototype.detachedCallback = function () {
@@ -30,7 +22,6 @@
     prototype: BrickSelectElementPrototype,
     extends: 'select'
   });
-
 })();
 ;
 /* global Platform */
@@ -45,8 +36,11 @@
   // Attributes
   var attrs = {
     "for": function (oldVal, newVal) {
-      var name = this.ns['for'] = newVal;
-      this.select = document.querySelector('select[name="' + name + '"]');
+      var name = newVal;
+      var select = document.querySelector('select[name="' + name + '"]');
+      if (this.ns.select !== select) {
+        this.proxyForSelect(select);
+      }
     }
   };
 
@@ -143,6 +137,19 @@
         return stopEvent(ev);
       });
 
+    shadowRoot.querySelector('button.cancel')
+      .addEventListener('click', function (ev) {
+        self.hide();
+        return stopEvent(ev);
+      });
+
+    shadowRoot.querySelector('button.commit')
+      .addEventListener('click', function (ev) {
+        self.hide();
+        self.updateSelectFromDialog();
+        return stopEvent(ev);
+      });
+
     shadowRoot.addEventListener('click', function (ev) {
       if (ev.target === self.shadowRoot.querySelector('.dialogue')) {
         self.hide();
@@ -154,6 +161,7 @@
           } else {
             self.setSelected(this);
             self.hide();
+            self.updateSelectFromDialog();
           }
         })(ev);
       }
@@ -204,7 +212,11 @@
 
   BrickSelectProxyElementPrototype.proxyForSelect = function (select) {
     this.ns.select = select;
-    if (select) { this.updateDialogFromSelect(); }
+    if (select) {
+      var name = select.getAttribute('name');
+      this.setAttribute('for', this.ns['for'] = name);
+      this.updateDialogFromSelect();
+    }
     return select;
   };
 
@@ -219,9 +231,6 @@
     for (var i = 0; i < selected.length; i++) {
       selected[i].removeAttribute('selected');
     }
-    if (update !== false) {
-      this.updateSelectFromDialog();
-    }
   };
 
   BrickSelectProxyElementPrototype.toggleSelected = function (el) {
@@ -231,7 +240,6 @@
     } else {
       el.removeAttribute('selected');
     }
-    this.updateSelectFromDialog();
   };
 
   BrickSelectProxyElementPrototype.updateDialogFromSelect = function () {
@@ -244,6 +252,12 @@
 
     // Bail out if there's no associated <select>
     if (!this.ns.select) { return; }
+
+    if (this.ns.select.hasAttribute('multiple')) {
+      this.setAttribute('multiple', true);
+    } else {
+      this.removeAttribute('multiple');
+    }
 
     // Clone dialog menu items from <options>s in the <select>.
     var itemTemplateContent = importDoc.querySelector(TMPL_ITEM).content;
@@ -277,8 +291,8 @@
 
     // Walk through all the selected items in the dialog
     var selected = this.shadowRoot.querySelectorAll('li[selected]');
-    for (var i = 0; i < selected.length; i++) {
-      var item = selected[i];
+    for (var j = 0; j < selected.length; j++) {
+      var item = selected[j];
       var value = item.getAttribute('data-value');
 
       // Flag the selected light <option>, if available.
@@ -322,7 +336,6 @@
   BrickSelectProxyElementPrototype.attributeChangedCallback = function (attr, oldVal, newVal) {
     if (!(attr in attrs)) { return; }
     attrs[attr].call(this, oldVal, newVal);
-    render(this);
   };
 
   // Register the element

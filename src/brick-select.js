@@ -1,10 +1,4 @@
-/* global Platform */
-
 (function () {
-
-  var currentScript = document._currentScript || document.currentScript;
-  var importDoc = currentScript.ownerDocument;
-
   var BrickSelectElementPrototype = Object.create(HTMLSelectElement.prototype);
 
   BrickSelectElementPrototype.createdCallback = function () {
@@ -15,11 +9,9 @@
   };
 
   BrickSelectElementPrototype.attachedCallback = function () {
-    var self = this;
-
     var proxy = this.ns.proxy = document.createElement('brick-select-proxy');
     this.parentNode.insertBefore(proxy, this);
-    proxy.select = this;
+    proxy.proxyForSelect(this);
   };
 
   BrickSelectElementPrototype.detachedCallback = function () {
@@ -30,5 +22,4 @@
     prototype: BrickSelectElementPrototype,
     extends: 'select'
   });
-
 })();

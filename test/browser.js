@@ -169,18 +169,50 @@ describe('<select is="brick-select" name="select1">', function () {
         }, 0);
       });
 
+      it('should not have the multiple attribute', function () {
+        expect(proxy.hasAttribute('multiple')).to.be.false;
+      });
+
       describe('<select multiple>', function () {
 
-        beforeEach(function () {
+        beforeEach(function (done) {
           select.setAttribute('multiple', true);
+          click(close);
+          click(handle);
+          setTimeout(function () {
+            return done();
+          }, 0);
+        });
+
+        it('should have the multiple attribute', function () {
+          expect(proxy.hasAttribute('multiple')).to.be.true;
         });
 
         it('should not hide the dialog immediately on item click', function (done) {
           expect(dialog.hasAttribute('show')).to.be.true;
           click(menu.querySelectorAll('li')[0]);
-
           setTimeout(function () {
             expect(!isHidden(dialog)).to.be.true;
+            return done();
+          }, 0);
+        });
+
+        it('should not change the backing <select> when button.cancel is clicked', function (done) {
+          click(menu.querySelectorAll('li')[0]);
+          click(dialog.querySelector('button.cancel'));
+          setTimeout(function () {
+            var option = select.querySelectorAll('option')[0];
+            expect(option.hasAttribute('selected')).to.be.false;
+            return done();
+          }, 0);
+        });
+
+        it('should change the backing <select> when button.commit is clicked', function (done) {
+          click(menu.querySelectorAll('li')[0]);
+          click(dialog.querySelector('button.commit'));
+          setTimeout(function () {
+            var option = select.querySelectorAll('option')[0];
+            expect(option.hasAttribute('selected')).to.be.true;
             return done();
           }, 0);
         });
