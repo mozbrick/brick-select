@@ -221,24 +221,18 @@
   };
 
   BrickSelectProxyElementPrototype.setSelected = function (el) {
-    this.clearSelected(false);
-    el.setAttribute('selected', true);
-    this.updateSelectFromDialog();
+    this.clearSelected();
+    el.classList.add('selected');
+  };
+
+  BrickSelectProxyElementPrototype.toggleSelected = function (el) {
+    el.classList.toggle('selected');
   };
 
   BrickSelectProxyElementPrototype.clearSelected = function () {
     var selected = this.shadowRoot.querySelectorAll('li[selected]');
     for (var i = 0; i < selected.length; i++) {
       selected[i].removeAttribute('selected');
-    }
-  };
-
-  BrickSelectProxyElementPrototype.toggleSelected = function (el) {
-    var sel = el.hasAttribute('selected');
-    if (!sel) {
-      el.setAttribute('selected', true);
-    } else {
-      el.removeAttribute('selected');
     }
   };
 
@@ -265,9 +259,8 @@
     for (var i = 0; i < options.length; i++) {
       var option = options[i];
       var item = itemTemplateContent.cloneNode(true).querySelector('li');
-      if (option.hasAttribute('selected')) {
-        item.setAttribute('selected', true);
-      }
+      var isSelected = option.hasAttribute('selected');
+      item.classList[isSelected ? 'add' : 'remove']('selected');
       item.setAttribute('data-value', option.getAttribute('value'));
       item.querySelector('.label').innerHTML = option.innerHTML;
       menu.appendChild(item);
@@ -290,7 +283,7 @@
     }
 
     // Walk through all the selected items in the dialog
-    var selected = this.shadowRoot.querySelectorAll('li[selected]');
+    var selected = this.shadowRoot.querySelectorAll('li.selected');
     for (var j = 0; j < selected.length; j++) {
       var item = selected[j];
       var value = item.getAttribute('data-value');
@@ -307,7 +300,7 @@
   // Update the handle button label with the list of selections
   BrickSelectProxyElementPrototype.updateHandleText = function () {
     var names = [];
-    var selected = this.shadowRoot.querySelectorAll('li[selected]');
+    var selected = this.shadowRoot.querySelectorAll('li.selected');
     for (var i = 0; i < selected.length; i++) {
       names.push(selected[i].querySelector('.label').textContent);
     }
