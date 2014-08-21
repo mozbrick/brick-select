@@ -170,6 +170,25 @@ describe('<select is="brick-select" name="select1">', function () {
         }, 0);
       });
 
+      it('<select> emit a `change` event on item click', function (done) {
+        var changeReceived = false;
+        function handler () {
+          changeReceived = true;
+          select.removeEventListener('change', handler);
+        }
+        select.addEventListener('change', handler);
+
+        var expectedIndex = 1;
+        var items = menu.querySelectorAll('li');
+
+        click(items[expectedIndex]);
+
+        setTimeout(function () {
+          expect(changeReceived).to.be.true;
+          return done();
+        }, 0);
+      });
+
       it('should allow only one item to be selected at a time', function (done) {
         var items = menu.querySelectorAll('li');
         items[0].classList.add('selected');

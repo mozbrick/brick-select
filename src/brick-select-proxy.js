@@ -269,6 +269,12 @@
     }
 
     this.updateHandleText();
+
+    this.ns.select.dispatchEvent(new Event('change', {
+      view: window,
+      bubbles: true,
+      cancelable: true
+    }));
   };
 
   // Update the handle button label with the list of selections
