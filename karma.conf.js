@@ -14,12 +14,13 @@ module.exports = function(config){
 
     frameworks: ['mocha', 'chai'],
 
-    browsers : ['Firefox'],
+    browsers : ['Firefox', 'Chrome'],
 
     reporters: ['spec'],
 
     plugins : [
       'karma-firefox-launcher',
+      'karma-chrome-launcher',
       'karma-mocha',
       'karma-chai',
       'karma-spec-reporter'
