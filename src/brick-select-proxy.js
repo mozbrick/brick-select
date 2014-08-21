@@ -200,7 +200,7 @@
     this.updateSelectFromDialog();
   };
 
-  BrickSelectProxyElementPrototype.clearSelected = function (update) {
+  BrickSelectProxyElementPrototype.clearSelected = function () {
     var selected = this.shadowRoot.querySelectorAll('li[selected]');
     for (var i = 0; i < selected.length; i++) {
       selected[i].removeAttribute('selected');
