@@ -204,9 +204,9 @@
   };
 
   BrickSelectProxyElementPrototype.clearSelected = function () {
-    var selected = this.shadowRoot.querySelectorAll('li[selected]');
+    var selected = this.shadowRoot.querySelectorAll('li');
     for (var i = 0; i < selected.length; i++) {
-      selected[i].removeAttribute('selected');
+      selected[i].classList.remove('selected');
     }
   };
 

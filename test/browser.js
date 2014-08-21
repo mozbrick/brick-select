@@ -149,6 +149,25 @@ describe('<select is="brick-select" name="select1">', function () {
         }, 0);
       });
 
+      it('should allow only one item to be selected at a time', function (done) {
+        var items = menu.querySelectorAll('li');
+        items[0].classList.add('selected');
+        click(items[1]);
+        setTimeout(function () {
+
+          expect(items[0].classList.contains('selected')).to.be.false;
+          expect(items[1].classList.contains('selected')).to.be.true;
+
+          var options = select.querySelectorAll('option');
+          expect(options[0].hasAttribute('selected')).to.be.false;
+          expect(options[1].hasAttribute('selected')).to.be.true;
+
+          expect(select.selectedIndex).to.equal(1);
+
+          return done();
+        }, 0);
+      });
+
       it('should hide the dialog immediately on item click', function (done) {
         expect(dialog.hasAttribute('show')).to.be.true;
         click(menu.querySelectorAll('li')[0]);
