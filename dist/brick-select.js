@@ -1,3 +1,29 @@
+(function () {
+  var BrickSelectElementPrototype = Object.create(HTMLSelectElement.prototype);
+
+  BrickSelectElementPrototype.createdCallback = function () {
+    this.ns = { };
+
+    // HACK: Hide the <select> and just leave the proxy visible.
+    this.style.display = 'none';
+  };
+
+  BrickSelectElementPrototype.attachedCallback = function () {
+    var proxy = this.ns.proxy = document.createElement('brick-select-proxy');
+    this.parentNode.insertBefore(proxy, this);
+    proxy.proxyForSelect(this);
+  };
+
+  BrickSelectElementPrototype.detachedCallback = function () {
+    this.parentNode.removeChild(this.ns.proxy);
+  };
+
+  window.BrickSelectElement = document.registerElement('brick-select', {
+    prototype: BrickSelectElementPrototype,
+    extends: 'select'
+  });
+})();
+;
 /* global Platform */
 
 (function () {
@@ -5,19 +31,62 @@
   var currentScript = document._currentScript || document.currentScript;
   var importDoc = currentScript.ownerDocument;
 
-  var BrickSelectElementPrototype = Object.create(HTMLElement.prototype);
+  var BrickSelectProxyElementPrototype = Object.create(HTMLElement.prototype);
+
+  // Attributes
+  var attrs = {
+    "for": function (oldVal, newVal) {
+      var name = newVal;
+      var select = document.querySelector('select[name="' + name + '"]');
+      if (this.ns.select !== select) {
+        this.proxyForSelect(select);
+      }
+    }
+  };
+
+  // Properties
+  var props = {
+    "select": {
+      get: function () {
+        return this.ns.select;
+      },
+      set: function (el) {
+        return this.proxyForSelect(el);
+      }
+    }
+  };
+
+  // Magical property boilerplating based on attributes
+  function makeProp (name) {
+    return {
+      get: function () {
+        return this.ns[name];
+      },
+      set: function (newVal) {
+        return this.attributeChangedCallback(name, this.ns[name], newVal);
+      }
+    };
+  }
+  for (var name in attrs) {
+    if (!props.hasOwnProperty(name)) {
+      props[name] = makeProp(name);
+    }
+  }
+
+  Object.defineProperties(BrickSelectProxyElementPrototype, props);
 
   // Lifecycle methods
 
   var TMPL_ROOT = 'template#brick-select-template';
   var TMPL_ITEM = 'template#brick-select-option-template';
 
-  BrickSelectElementPrototype.createdCallback = function () {
+  BrickSelectProxyElementPrototype.createdCallback = function () {
     this.ns = { };
 
     var template = importDoc.querySelector(TMPL_ROOT);
 
-    shimShadowStyles(template.content.querySelectorAll('style'),'brick-select');
+    shimShadowStyles(template.content.querySelectorAll('style'),
+                     'brick-select-proxy');
 
     var shadowRoot = this.createShadowRoot();
     shadowRoot.appendChild(template.content.cloneNode(true));
@@ -26,86 +95,94 @@
     if (title) {
       shadowRoot.querySelector('header h1').textContent = title;
     } else {
-      shadowRoot.removeChild(shadowRoot.querySelector('header'));
+      var header = shadowRoot.querySelector('header');
+      header.parentNode.removeChild(header);
     }
 
     shadowRoot.querySelector('button.handle span').textContent = title;
 
-    var menu = shadowRoot.querySelector('ul.menu');
-    var itemTemplateContent = importDoc.querySelector(TMPL_ITEM).content;
-
-    var options = this.querySelectorAll('option');
-    for (var i = 0; i < options.length; i++) {
-      var option = options[i];
-      var item = itemTemplateContent.cloneNode(true).querySelector('li');
-      item.setAttribute('data-value', option.getAttribute('value'));
-      item.querySelector('.label').innerHTML = option.innerHTML;
-      menu.appendChild(item);
+    for (var k in attrs) {
+      if (this.hasAttribute(k)) {
+        attrs[k].call(this, null, this.getAttribute(k));
+      }
     }
   };
 
-  BrickSelectElementPrototype.attachedCallback = function () {
+  BrickSelectProxyElementPrototype.attachedCallback = function () {
     var self = this;
     var shadowRoot = this.shadowRoot;
 
-    var inputs = this.ns.inputs = document.createElement('div');
-    inputs.style.visibility = 'hidden';
-    this.parentNode.insertBefore(inputs, this);
+    this.updateSelectFromDialog();
 
-    this.updateProxy();
+    // Intercept <label> clicks to show select dialog
+    document.addEventListener('click', function (ev) {
+      if (!self.select) { return; }
+      var sel = 'label[for="' + self.select.getAttribute('name') + '"]';
+      return delegate(sel, function (ev) {
+        self.show();
+        return stopEvent(ev);
+      })(ev);
+    });
 
+    // Clicks on the visible select handle button shows the dialog
     shadowRoot.querySelector('button.handle')
       .addEventListener('click', function (ev) {
         self.show();
-        ev.stopPropagation();
-        ev.preventDefault();
+        return stopEvent(ev);
       });
 
     shadowRoot.querySelector('button.close')
       .addEventListener('click', function (ev) {
         self.hide();
-        ev.stopPropagation();
-        ev.preventDefault();
+        return stopEvent(ev);
+      });
+
+    shadowRoot.querySelector('button.cancel')
+      .addEventListener('click', function (ev) {
+        self.hide();
+        return stopEvent(ev);
+      });
+
+    shadowRoot.querySelector('button.commit')
+      .addEventListener('click', function (ev) {
+        self.hide();
+        self.updateSelectFromDialog();
+        return stopEvent(ev);
       });
 
     shadowRoot.addEventListener('click', function (ev) {
-      /*
       if (ev.target === self.shadowRoot.querySelector('.dialogue')) {
-        return self.hide();
+        self.hide();
+      } else {
+        delegate('.menu-item', function (ev) {
+          self.animateMenuItemClick(this, ev);
+          if (self.select && self.select.hasAttribute('multiple')) {
+            self.toggleSelected(this);
+          } else {
+            self.setSelected(this);
+            self.hide();
+            self.updateSelectFromDialog();
+          }
+        })(ev);
       }
-      */
-      return delegate('.menu-item', function (ev) {
-        self.animateMenuItemClick(this, ev);
-        if (self.hasAttribute('multiple')) {
-          self.toggleSelected(this);
-        } else {
-          self.setSelected(this);
-          self.hide();
-        }
-      })(ev);
+      return stopEvent(ev);
     });
 
   };
 
-  BrickSelectElementPrototype.detachedCallback = function () {
-    this.ns.inputs.parentNode.removeChild(this.ns.inputs);
+  BrickSelectProxyElementPrototype.detachedCallback = function () {
   };
 
-  BrickSelectElementPrototype.attributeChangedCallback = function (attr, oldVal, newVal) {
+  BrickSelectProxyElementPrototype.attributeChangedCallback = function (attr, oldVal, newVal) {
     if (attr in attrs) {
       attrs[attr].call(this, oldVal, newVal);
     }
   };
 
-  // Attribute handlers
-
-  var attrs = {
-  };
-
   // Custom methods
 
-  BrickSelectElementPrototype.show = function (callback) {
-    this.ns.callback = callback;
+  BrickSelectProxyElementPrototype.show = function () {
+    this.updateDialogFromSelect();
 
     var dialogue = this.shadowRoot.querySelector('.dialogue');
     dialogue.setAttribute('show', 'in');
@@ -119,9 +196,7 @@
     dialogue.querySelector('.panel').addEventListener('webkitAnimationEnd', animEnd);
   };
 
-  BrickSelectElementPrototype.hide = function () {
-    this.ns.callback = null;
-
+  BrickSelectProxyElementPrototype.hide = function () {
     var dialogue = this.shadowRoot.querySelector('.dialogue');
     dialogue.setAttribute('show', 'out');
 
@@ -135,62 +210,118 @@
     dialogue.addEventListener('webkitAnimationEnd', animEnd, false);
   };
 
-  BrickSelectElementPrototype.setSelected = function (el) {
-    this.clearSelected(false);
-    el.setAttribute('selected', true);
-    this.updateProxy();
+  BrickSelectProxyElementPrototype.proxyForSelect = function (select) {
+    this.ns.select = select;
+    if (select) {
+      var name = select.getAttribute('name');
+      this.setAttribute('for', this.ns['for'] = name);
+      this.updateDialogFromSelect();
+    }
+    return select;
   };
 
-  BrickSelectElementPrototype.clearSelected = function (update) {
+  BrickSelectProxyElementPrototype.setSelected = function (el) {
+    this.clearSelected(false);
+    el.setAttribute('selected', true);
+    this.updateSelectFromDialog();
+  };
+
+  BrickSelectProxyElementPrototype.clearSelected = function (update) {
     var selected = this.shadowRoot.querySelectorAll('li[selected]');
     for (var i = 0; i < selected.length; i++) {
       selected[i].removeAttribute('selected');
     }
-    if (update !== false) {
-      this.updateProxy();
-    }
   };
 
-  BrickSelectElementPrototype.toggleSelected = function (el) {
+  BrickSelectProxyElementPrototype.toggleSelected = function (el) {
     var sel = el.hasAttribute('selected');
     if (!sel) {
       el.setAttribute('selected', true);
     } else {
       el.removeAttribute('selected');
     }
-    this.updateProxy();
   };
 
-  BrickSelectElementPrototype.updateProxy = function () {
-    var names = [];
-    var inputs = this.ns.inputs;
-    while (inputs.firstChild) {
-      inputs.removeChild(inputs.firstChild);
+  BrickSelectProxyElementPrototype.updateDialogFromSelect = function () {
+    var menu = this.shadowRoot.querySelector('ul.menu');
+
+    // Clear out any existing items.
+    while (menu.firstChild) {
+      menu.removeChild(menu.firstChild);
     }
+
+    // Bail out if there's no associated <select>
+    if (!this.ns.select) { return; }
+
+    if (this.ns.select.hasAttribute('multiple')) {
+      this.setAttribute('multiple', true);
+    } else {
+      this.removeAttribute('multiple');
+    }
+
+    // Clone dialog menu items from <options>s in the <select>.
+    var itemTemplateContent = importDoc.querySelector(TMPL_ITEM).content;
+    var options = this.ns.select.querySelectorAll('option');
+    for (var i = 0; i < options.length; i++) {
+      var option = options[i];
+      var item = itemTemplateContent.cloneNode(true).querySelector('li');
+      if (option.hasAttribute('selected')) {
+        item.setAttribute('selected', true);
+      }
+      item.setAttribute('data-value', option.getAttribute('value'));
+      item.querySelector('.label').innerHTML = option.innerHTML;
+      menu.appendChild(item);
+    }
+
+    this.updateHandleText();
+  };
+
+  BrickSelectProxyElementPrototype.updateSelectFromDialog = function () {
+    // Bail if there's no associated <select>
+    if (!this.ns.select) { return; }
+
+    // Deselect all options, map by value.
+    var options = this.ns.select.querySelectorAll('option');
+    var optionsByValue = {};
+    for (var i = 0; i < options.length; i++) {
+      var option = options[i];
+      option.removeAttribute('selected');
+      optionsByValue[option.getAttribute('value')] = option;
+    }
+
+    // Walk through all the selected items in the dialog
+    var selected = this.shadowRoot.querySelectorAll('li[selected]');
+    for (var j = 0; j < selected.length; j++) {
+      var item = selected[j];
+      var value = item.getAttribute('data-value');
+
+      // Flag the selected light <option>, if available.
+      if (optionsByValue[value]) {
+        optionsByValue[value].setAttribute('selected', true);
+      }
+    }
+
+    this.updateHandleText();
+  };
+
+  // Update the handle button label with the list of selections
+  BrickSelectProxyElementPrototype.updateHandleText = function () {
+    var names = [];
     var selected = this.shadowRoot.querySelectorAll('li[selected]');
     for (var i = 0; i < selected.length; i++) {
-      var item = selected[i];
-      var input = document.createElement('input');
-      var attrs = {
-        type: 'hidden',
-        name: this.getAttribute('name'),
-        value: item.getAttribute('data-value')
-      };
-      for (var k in attrs) {
-        input.setAttribute(k, attrs[k]);
-      }
-      inputs.appendChild(input);
-      names.push(item.querySelector('.label').textContent);
+      names.push(selected[i].querySelector('.label').textContent);
     }
-    this.shadowRoot.querySelector('button.handle span').textContent = names.join(', ');
+    this.shadowRoot.querySelector('button.handle span')
+        .textContent = names.join(', ');
   };
 
-  BrickSelectElementPrototype.animateMenuItemClick = function (item, ev) {
+  BrickSelectProxyElementPrototype.animateMenuItemClick = function (item, ev) {
     var animate = this.shadowRoot.querySelector('.feedback.animate');
     if (animate) { animate.classList.remove('animate'); }
 
     var selected = item.querySelector('.feedback');
     if (selected) {
+        // Use mouse click position as origin of the "ripple" effect
         var w = selected.parentNode.offsetWidth*2;
         selected.style.width = w+'px';
         selected.style.height = w+'px';
@@ -200,13 +331,20 @@
     }
   };
 
+  // Property handlers
+
+  BrickSelectProxyElementPrototype.attributeChangedCallback = function (attr, oldVal, newVal) {
+    if (!(attr in attrs)) { return; }
+    attrs[attr].call(this, oldVal, newVal);
+  };
+
   // Register the element
 
-  window.BrickSelectElement = document.registerElement('brick-select', {
-    prototype: BrickSelectElementPrototype
+  window.BrickSelectProxyElement = document.registerElement('brick-select-proxy', {
+    prototype: BrickSelectProxyElementPrototype
   });
 
-  // Utility funcitons
+  // Utility functions
 
   function shimShadowStyles(styles, tag) {
     if (!Platform.ShadowCSS) {
@@ -234,6 +372,12 @@
         }
       }
     };
+  }
+
+  function stopEvent (ev) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    return false;
   }
 
 })();
