@@ -10,69 +10,21 @@
 
 ## Usage
 
-1. Import Web Components polyfill:
+```html
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="//code.cdn.mozilla.net/fonts/fira.css">
+<link rel="stylesheet" type="text/css" href="brick-select.css">
 
-    ```html
-    <script src="bower_components/platform/platform.js"></script>
-    ```
-
-2. Import Custom Element:
-
-    ```html
-    <link rel="import" href="src/brick-select.html">
-    ```
-
-3. Start using it:
-
-    ```html
-    <brick-select></brick-select>
-    ```
-
-## Options
-
-Attribute     | Options     | Default      | Description
----           | ---         | ---          | ---
-`foo`         | *string*    | `bar`        | An Attribute.
-
-## Methods
-
-Method        | Parameters   | Returns     | Description
----           | ---          | ---         | ---
-`method()`    | None.        | Nothing.    | A method.
-
-## Events
-
-Event         | Description
----           | ---
-`onsomething` | Triggers when something happens.
+<script src="//cdnjs.cloudflare.com/ajax/libs/document-register-element/0.1.2/document-register-element.js"></script>
+<script src="brick-select.js"></script>
+```
 
 ## Development
 
-Brick components use [Stylus](http://learnboost.github.com/stylus/) to generate their CSS.
+```
+npm install
+gulp build
+gulp server
+```
 
-This repository comes outfitted with a set of tools to ease the development process.
-
-To get started:
-
-* Install [Bower](http://bower.io/) & [Gulp](http://gulpjs.com/):
-
-    ```sh
-    $ npm install -g bower gulp
-    ```
-
-* Install local dependencies:
-
-    ```sh
-    $ npm install && bower install
-    ```
-
-While developing your component, there is a development server that will watch your files for changes and automatically re-build your styles and re-lint your code.
-
-To run the development server:
-
-* Run `gulp server`
 * Navigate to `http://localhost:3001`
-
-To simply build and lint your code, run `gulp build`.
-
-You can also push your code to GitHub Pages by running `gulp deploy`.
