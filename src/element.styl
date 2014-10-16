@@ -1,8 +1,55 @@
-@import '../bower_components/brick-common/styles/mixins'
-@import '../bower_components/brick-common/styles/params'
+// HACK: Stolen from brick-common/styles/params.styl
 
-// HACK
-@import '../../../bower_components/brick-common/styles/themes/default/params'
+$_bgBaseColor = #858585;
+$_bgSelectBaseColor = #E1E1E1;
+$_bgHighlightColor = #A0A0A0;
+
+$highlight = #0095DD;
+$darkBG = #00202F;
+$barFG = #fff;
+
+$barHeight = 45px;
+$tapTargetSize = 32px;
+
+$COMPONENT_CUSTOM_FONT_NAME = "Fira Sans";
+$fontFamilyPrimary = $COMPONENT_CUSTOM_FONT_NAME, "Fira Sans", "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+$COMPONENT_UI_LINE_HEIGHT = 19px;
+$COMPONENT_UI_FONT_SIZE = 14px;
+$COMPONENT_UI_HEADER_FONT_SIZE = 20px;
+$COMPONENT_UI_LINE_PADDING = ($COMPONENT_UI_LINE_HEIGHT - $COMPONENT_UI_FONT_SIZE) / 2; // for when you don't want to specify line-height
+$COMPONENT_UI_TEXT_COLOR = #D4D4D4;
+$COMPONENT_UI_TEXT_COLOR_SELECTED = #F2F2F2;
+$COMPONENT_UI_TEXT_COLOR_HOVER = mix($COMPONENT_UI_TEXT_COLOR, $COMPONENT_UI_TEXT_COLOR_SELECTED, 25%);
+
+// responsive breakpoints
+$xs = {                end:  768px, name: xs }
+$s  = { start:  768px, end:  992px, name: s  }
+$m  = { start:  992px, end: 1200px, name: m  }
+$l  = { start: 1200px,              name: l  }
+
+// HACK: Stolen from brick-common/styles/themes/default/params.styl
+
+// colors
+$color-alpha = #333;
+$color-beta = #FFF;
+$color-gamma = #4D4D4D;
+$color-delta = #5F5F5F;
+$color-epsilon = #858585;
+$color-zeta = #A6A6A6;
+$color-eta = #C7C7C7;
+$color-theta = #E7E7E7;
+$color-iota = #F4F4F4;
+$highlight-color = #000;
+$button-transition = all 0s;
+$button-transition-delay = 300ms;
+
+// dimensions
+$dim-micro = 6px;
+$dim-small = 14px;
+$dim-mega = 60px;
+
+/////
+
 $font-small = 14px;
 $font-medium = 17px;
 $font-large = 23px;
@@ -31,7 +78,7 @@ $color-button-border = #d6d6d6;
 }
 
 
-:host([multiple]) {
+[multiple] .brick-select-proxy-root {
   .dialogue {
     .panel {
       footer.single { display: none; }
@@ -40,7 +87,7 @@ $color-button-border = #d6d6d6;
   }
 }
 
-:host {
+.brick-select-proxy-root {
 
   .dialogue {
     visibility: hidden;
