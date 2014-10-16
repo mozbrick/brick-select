@@ -8,7 +8,7 @@
 
 [Check it live!](http://mozbrick.github.io/brick-select)
 
-## Usage
+## Installation
 
 ```html
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
@@ -18,6 +18,10 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/document-register-element/0.1.2/document-register-element.js"></script>
 <script src="brick-select.js"></script>
 ```
+
+## Usage
+
+See [index.html](https://github.com/mozbrick/brick-select/blob/master/dist/index.html) for an example.
 
 ## Development
 
