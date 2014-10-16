@@ -1,32 +1,29 @@
-<link rel="import" href="../bower_components/brick-common/brick-common.html">
-
-<template id="brick-select-template">
-  <style>:host([multiple]) .dialogue .panel footer.single {
+[multiple] .brick-select-proxy-root .dialogue .panel footer.single {
   display: none;
 }
-:host([multiple]) .dialogue .panel footer.multiple {
+[multiple] .brick-select-proxy-root .dialogue .panel footer.multiple {
   display: flex;
 }
-:host .dialogue {
+.brick-select-proxy-root .dialogue {
   visibility: hidden;
 }
-:host .dialogue .panel {
+.brick-select-proxy-root .dialogue .panel {
   opacity: 0;
 }
-:host .dialogue[show] {
+.brick-select-proxy-root .dialogue[show] {
   visibility: visible;
 }
-:host .dialogue[show] .panel {
+.brick-select-proxy-root .dialogue[show] .panel {
   opacity: 1;
 }
-:host .dialogue[show="in"] {
+.brick-select-proxy-root .dialogue[show="in"] {
   visibility: visible;
   animation-name: brickSelectFadeIn;
   animation-duration: 0.3s;
   -webkit-animation-name: brickSelectFadeIn;
   -webkit-animation-duration: 0.3s;
 }
-:host .dialogue[show="in"] .panel {
+.brick-select-proxy-root .dialogue[show="in"] .panel {
   opacity: 0;
   animation-name: brickSelectTranslateIn;
   animation-delay: 0.4s;
@@ -37,10 +34,10 @@
   -webkit-animation-duration: 0.3s;
   -webkit-animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-:host .dialogue[show="in"] .panel menu button {
+.brick-select-proxy-root .dialogue[show="in"] .panel menu button {
   transition: none;
 }
-:host .dialogue[show="out"] {
+.brick-select-proxy-root .dialogue[show="out"] {
   visibility: visible;
   animation-name: brickSelectFadeOut;
   animation-delay: 0.4s;
@@ -49,7 +46,7 @@
   -webkit-animation-delay: 0.4s;
   -webkit-animation-duration: 0.3s;
 }
-:host .dialogue[show="out"] .panel {
+.brick-select-proxy-root .dialogue[show="out"] .panel {
   opacity: 0;
   animation-name: brickSelectFadeOut;
   animation-duration: 0.3s;
@@ -58,10 +55,10 @@
   -webkit-animation-duration: 0.3s;
   -webkit-animation-timing-function: linear;
 }
-:host .dialogue[show="out"] .panel menu button {
+.brick-select-proxy-root .dialogue[show="out"] .panel menu button {
   transition: none;
 }
-:host button.handle {
+.brick-select-proxy-root button.handle {
   position: relative;
   background: transparent;
   color: #333;
@@ -79,13 +76,13 @@
   transition: all 0.2;
   transition-delay: var(--button-transition-delay, 200ms);
 }
-:host button.handle span {
+.brick-select-proxy-root button.handle span {
   display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-:host button.handle:after {
+.brick-select-proxy-root button.handle:after {
   content: " ";
   position: absolute;
   width: 0px;
@@ -95,7 +92,7 @@
   border-bottom: 10px solid #000;
   border-left: 10px solid transparent;
 }
-:host .dialogue {
+.brick-select-proxy-root .dialogue {
   font-family: "Fira Sans", "Fira Sans", "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
   font-size: 17px;
   background: rgba(199,199,199,0.85);
@@ -106,18 +103,12 @@
   width: 100%;
   height: 100%;
   display: flex;
-  -webkit-align-items: center;
-  -moz-align-items: center;
-  -ms-align-items: center;
   align-items: center;
-  -webkit-justify-content: center;
-  -moz-justify-content: center;
-  -ms-justify-content: center;
   justify-content: center;
   z-index: 200;
   font-style: italic;
 }
-:host .dialogue .panel {
+.brick-select-proxy-root .dialogue .panel {
   max-height: 75%;
   max-width: 350px;
   width: 90%;
@@ -126,10 +117,10 @@
   margin: auto;
   background: #f4f4f4;
 }
-:host .dialogue .panel header {
+.brick-select-proxy-root .dialogue .panel header {
   padding: 14px;
 }
-:host .dialogue .panel header h1 {
+.brick-select-proxy-root .dialogue .panel header h1 {
   text-align: center;
   font-size: 23px;
   font-weight: lighter;
@@ -139,16 +130,16 @@
   margin: 6px 0 24px 0;
   padding: 0;
 }
-:host .dialogue .panel footer.single {
+.brick-select-proxy-root .dialogue .panel footer.single {
   display: flex;
 }
-:host .dialogue .panel footer.multiple {
+.brick-select-proxy-root .dialogue .panel footer.multiple {
   display: none;
 }
-:host .dialogue .panel footer {
+.brick-select-proxy-root .dialogue .panel footer {
   display: none;
 }
-:host .dialogue .panel footer button {
+.brick-select-proxy-root .dialogue .panel footer button {
   height: 50px;
   font-weight: lighter;
   font-style: italic;
@@ -163,7 +154,7 @@
   transition-delay: 200ms;
   position: relative;
 }
-:host .dialogue .panel footer button:after {
+.brick-select-proxy-root .dialogue .panel footer button:after {
   content: " ";
   position: absolute;
   --dim-micro: 6px;
@@ -174,53 +165,48 @@
   background: #e7e7e7;
   z-index: 1;
 }
-:host .dialogue .panel footer button:active {
+.brick-select-proxy-root .dialogue .panel footer button:active {
   background-color: #00caf2;
   color: #fff;
   transition: none;
 }
-:host .dialogue .panel footer button:active:after {
+.brick-select-proxy-root .dialogue .panel footer button:active:after {
   z-index: -1;
 }
-:host .dialogue .panel footer button:last-child:after {
+.brick-select-proxy-root .dialogue .panel footer button:last-child:after {
   display: none;
 }
-:host .dialogue .panel .menu {
+.brick-select-proxy-root .dialogue .panel .menu {
   max-height: 350px;
   overflow-y: auto;
   padding: 0;
   margin: 0;
   width: 100%;
 }
-:host .dialogue .panel .menu .menu-item {
+.brick-select-proxy-root .dialogue .panel .menu .menu-item {
   padding: 14px;
   color: #4d4d4d;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   list-style: none;
   position: relative;
   z-index: 1;
   overflow: hidden;
   display: flex;
-  -webkit-align-items: center;
-  -moz-align-items: center;
-  -ms-align-items: center;
   align-items: center;
   position: relative;
 }
-:host .dialogue .panel .menu .menu-item.selected {
+.brick-select-proxy-root .dialogue .panel .menu .menu-item.selected {
   color: #00caf2;
 }
-:host .dialogue .panel .menu .menu-item.selected .label {
+.brick-select-proxy-root .dialogue .panel .menu .menu-item.selected .label {
   font-weight: bold;
   flex-grow: 1;
 }
-:host .dialogue .panel .menu .menu-item.selected .icon:before {
+.brick-select-proxy-root .dialogue .panel .menu .menu-item.selected .icon:before {
   content: "\f00c";
   font-size: 18px;
 }
-:host .dialogue .panel .menu .menu-item.selected .icon {
+.brick-select-proxy-root .dialogue .panel .menu .menu-item.selected .icon {
   display: inline-block;
   font-family: FontAwesome;
   font-style: normal;
@@ -229,7 +215,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-:host .dialogue .panel .menu .menu-item:after {
+.brick-select-proxy-root .dialogue .panel .menu .menu-item:after {
   content: " ";
   position: absolute;
   bottom: 0px;
@@ -241,10 +227,10 @@
   margin-right: auto;
   background: #e7e7e7;
 }
-:host .dialogue .panel .menu .menu-item:after:last-child {
+.brick-select-proxy-root .dialogue .panel .menu .menu-item:after:last-child {
   display: none;
 }
-:host .dialogue .panel .menu .menu-item .feedback {
+.brick-select-proxy-root .dialogue .panel .menu .menu-item .feedback {
   content: "*";
   position: absolute;
   opacity: 0;
@@ -254,7 +240,7 @@
   transform: scaleX(1);
   z-index: -1;
 }
-:host .dialogue .panel .menu .menu-item .feedback.animate {
+.brick-select-proxy-root .dialogue .panel .menu .menu-item .feedback.animate {
   animation-name: brickSelectGrow;
   animation-duration: 800ms;
   animation-iteration: 1;
@@ -439,36 +425,3 @@
     opacity: 0;
   }
 }
-</style>
-  <style></style>
-
-  <button class="handle"><span></span></button>
-
-  <div class="dialogue" role="dialog">
-    <div class="panel">
-      <header>
-        <h1></h1>
-      </header>
-      <ul class="menu">
-      </ul>
-      <footer class="single">
-        <button class="close">Close</button>
-      </footer>
-      <footer class="multiple">
-        <button class="cancel">Cancel</button>
-        <button class="commit">Select</button>
-      </footer>
-    </div>
-  </div>
-</template>
-
-<template id="brick-select-option-template">
-  <li class="menu-item">
-    <span class="label"></span><i class="icon"></i>
-    <div class="feedback"></div>
-  </li>
-</template>
-
-
-
-<script src="brick-select.js"></script>

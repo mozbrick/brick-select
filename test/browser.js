@@ -51,10 +51,10 @@ describe('<select is="brick-select" name="select1">', function () {
 
     before(function () {
       proxy = document.querySelector('brick-select-proxy');
-      dialog = proxy.shadowRoot.querySelector('.dialogue');
-      menu = proxy.shadowRoot.querySelector('.menu');
-      handle = proxy.shadowRoot.querySelector('.handle');
-      close = proxy.shadowRoot.querySelector('.close');
+      dialog = proxy.root.querySelector('.dialogue');
+      menu = proxy.root.querySelector('.menu');
+      handle = proxy.root.querySelector('.handle');
+      close = proxy.root.querySelector('.close');
     });
 
     beforeEach(function () {
@@ -289,18 +289,6 @@ describe('<select is="brick-select" name="select1">', function () {
  */
 
 var expect = chai.expect;
-
-var ready;
-before(function (done) {
-  ready = done;
-});
-
-window.addEventListener('WebComponentsReady', function() {
-  document.head.innerHTML += '<link rel="import" id="el" href="/base/src/brick-select.html">';
-  document.querySelector('#el').addEventListener('load', function () {
-    ready();
-  });
-});
 
 function isHidden (dialog) {
   // FIXME: Should be able to defer until animation has completed.

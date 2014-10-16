@@ -3,9 +3,10 @@ module.exports = function(config){
     basePath: '.',
 
     files : [
-      'bower_components/platform/platform.js',
+      'node_modules/document-register-element/build/document-register-element.js',
+      'dist/brick-select.js',
       'test/browser.js',
-      {pattern: 'src/*', watched: true, included: false, served: true}
+      {pattern: 'dist/*', watched: true, included: false, served: true}
     ],
 
     autoWatch : true,
