@@ -10,7 +10,7 @@ var uglify = require('gulp-uglify');
 var deploy = require('gulp-gh-pages');
 
 var PATH = {
-  src: __dirname + '/src',
+  src: './src',
   main: 'element.js',
   stylus: 'element.styl',
   srcFiles: './src/**/*',
@@ -23,7 +23,7 @@ gulp.task('build', ['browserify', 'stylus', 'compress']);
 
 gulp.task('browserify', function () {
   browserify({debug: false})
-    .add(path.join(PATH.src, PATH.main))
+    .add(PATH.src + '/' + PATH.main)
     .bundle()
     .pipe(source(PATH.distFileJS))
     .pipe(gulp.dest(PATH.dist));

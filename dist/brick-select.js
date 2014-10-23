@@ -1,33 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = '<template id="brick-select-template">\n' +
-    '  <button class="handle"><span></span></button>\n' +
-    '\n' +
-    '  <div class="dialogue" role="dialog">\n' +
-    '    <div class="panel">\n' +
-    '      <header>\n' +
-    '        <h1></h1>\n' +
-    '      </header>\n' +
-    '      <ul class="menu">\n' +
-    '      </ul>\n' +
-    '      <footer class="single">\n' +
-    '        <button class="close">Close</button>\n' +
-    '      </footer>\n' +
-    '      <footer class="multiple">\n' +
-    '        <button class="cancel">Cancel</button>\n' +
-    '        <button class="commit">Select</button>\n' +
-    '      </footer>\n' +
-    '    </div>\n' +
-    '  </div>\n' +
-    '</template>\n' +
-    '\n' +
-    '<template id="brick-select-option-template">\n' +
-    '  <li class="menu-item">\n' +
-    '    <span class="label"></span><i class="icon"></i>\n' +
-    '    <div class="feedback"></div>\n' +
-    '  </li>\n' +
-    '</template>\n' +
-    '';
-},{}],2:[function(require,module,exports){
 var importDoc = document.implementation.createHTMLDocument('');
 importDoc.body.innerHTML = require('./element.html');
 
@@ -392,4 +363,33 @@ function stopEvent (ev) {
   return false;
 }
 
-},{"./element.html":1}]},{},[2]);
+},{"./element.html":2}],2:[function(require,module,exports){
+module.exports = '<template id="brick-select-template">\n' +
+    '  <button class="handle"><span></span></button>\n' +
+    '\n' +
+    '  <div class="dialogue" role="dialog">\n' +
+    '    <div class="panel">\n' +
+    '      <header>\n' +
+    '        <h1></h1>\n' +
+    '      </header>\n' +
+    '      <ul class="menu">\n' +
+    '      </ul>\n' +
+    '      <footer class="single">\n' +
+    '        <button class="close">Close</button>\n' +
+    '      </footer>\n' +
+    '      <footer class="multiple">\n' +
+    '        <button class="cancel">Cancel</button>\n' +
+    '        <button class="commit">Select</button>\n' +
+    '      </footer>\n' +
+    '    </div>\n' +
+    '  </div>\n' +
+    '</template>\n' +
+    '\n' +
+    '<template id="brick-select-option-template">\n' +
+    '  <li class="menu-item">\n' +
+    '    <span class="label"></span><i class="icon"></i>\n' +
+    '    <div class="feedback"></div>\n' +
+    '  </li>\n' +
+    '</template>\n' +
+    '';
+},{}]},{},[1]);
